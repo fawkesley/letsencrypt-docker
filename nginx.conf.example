@@ -1,0 +1,43 @@
+server {
+    server_name  paulfurley.com;
+    rewrite ^(.*) https://www.paulfurley.com$1 permanent;
+}
+
+server {
+  listen 80;
+
+  location / {
+    # Redirect (almost) anything on HTTP to HTTPS
+    return 301 https://$host$request_uri;
+  } 
+
+  location /.well-known/acme-challenge/ {
+    # For the letsencrypt "webroot" plugin
+    # http://letsencrypt.readthedocs.org/en/latest/using.html#webroot
+    
+    root /etc/letsencrypt/fake-webroot;
+  }
+}
+
+server {
+    listen 443;
+    server_name www.paulfurley.com;
+
+    ssl_certificate           /etc/letsencrypt/live/www.paulfurley.com/fullchain.pem;
+    ssl_certificate_key       /etc/letsencrypt/live/www.paulfurley.com/privkey.pem;
+
+    ssl on;
+    ssl_session_cache  builtin:1000  shared:SSL:10m;
+    ssl_protocols  TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
+    ssl_prefer_server_ciphers on;
+
+    access_log            /var/log/nginx/www.paulfurley.com.access.log;
+
+    location / {
+      # In this example it's a static site but it could alternatively be a backend
+      # service (reverse proxy) eg localhost:8000
+
+      root /var/www/www.paulfurley.com;
+    }
+}
