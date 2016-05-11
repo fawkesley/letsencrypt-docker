@@ -2,7 +2,7 @@ TAG_NAME=letsencrypt
 
 .PHONY: update-certificate
 update-certificate:
-	echo hello
+	mkdir -p /etc/letsencrypt/fake-webroot
 	docker build --tag=${TAG_NAME} .
 	docker run -ti \
 	    --volume "/etc/letsencrypt:/etc/letsencrypt" \
