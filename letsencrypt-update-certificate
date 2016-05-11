@@ -1,0 +1,15 @@
+#!/bin/sh -eux
+
+# This script runs *inside* the Docker container.
+# 
+# We share /etc/letsencrypt from the host machine into the container,
+# allowing us to write to /etc/letsencrypt/fake-webroot for proof of
+# ownership.
+
+
+/opt/letsencrypt/letsencrypt-auto \
+    certonly \
+    --renew-by-default \
+    --webroot \
+    -w /etc/letsencrypt/fake-webroot \
+    -d ${LETSENCRYPT_DOMAIN}
